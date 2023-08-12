@@ -897,10 +897,10 @@ class CBOR {
       return Number(value);
     }
 
-    compareAndReturn = function(tag, decoded, f64) {
+    compareAndReturn = function(tag, fBytes, f64) {
 
       let cborFloat = CBOR.Float(f64);
-      if (CBOR.compareArrays(cborFloat.encode(), CBOR.addArrays(new Uint8Array([tag]), decoded)) &&
+      if (CBOR.compareArrays(cborFloat.encode(), CBOR.addArrays(new Uint8Array([tag]), fBytes)) &&
           this.deterministicMode) {
         CBOR.#error("Non-deterministic encoding of: " + f64);
       }
