@@ -201,13 +201,13 @@ function oneTurn(cborText, ok, compareWithOrNull) {
 }
 
 oneTurn("2", true, null);
-oneTurn("2.0", true, null);
+oneTurn("2.0", true, "2");
 oneTurn("123456789012345678901234567890", true, null);
 oneTurn("Infinity", true, null);
 oneTurn("-Infinity", true, null);
 oneTurn("NaN", true, null);
-oneTurn("0.0", true, null);
-oneTurn("-0.0", true, null);
+oneTurn("0.0", true, "0");
+oneTurn("-0.0", true, "0");
 oneTurn('{\n  4: "hi"\n}', true, null);
 oneTurn('[4, true, false, null]', true, null);
 oneTurn('"next\\nline"', true, null);
@@ -260,14 +260,14 @@ function oneTurn(value, expected) {
 }
 oneTurn(6.10649585723877e-5, 'fa38801000');
 oneTurn(10.559998512268066, 'fa4128f5c1');
-oneTurn(65472.0, 'f97bfe');
+oneTurn(65472.0, '19ffc0');
 oneTurn(65472.00390625, 'fa477fc001');
-oneTurn(65503.0, 'fa477fdf00');
-oneTurn(65504.0, 'f97bff');
+oneTurn(65503.0, '19ffdf');
+oneTurn(65504.0, '19ffe0');
 oneTurn(65504.00390625, 'fa477fe001');
 oneTurn(65504.5, 'fa477fe080');
-oneTurn(65505.0, 'fa477fe100');
-oneTurn(131008.0, 'fa47ffe000');
+oneTurn(65505.0, '19ffe1');
+oneTurn(131008.0, '1a0001ffc0');
 oneTurn(-5.960464477539062e-8, 'fbbe6fffffffffffff');
 oneTurn(-5.9604644775390625e-8, 'f98001');
 oneTurn(-5.960464477539064e-8, 'fbbe70000000000001');
@@ -480,7 +480,7 @@ oneTurn('1817', '23');
 oneTurn('A2026374776F01636F6E65', '{\n  1: "one",\n  2: "two"\n}');
 oneTurn('FB7FF8000000000000', 'NaN');
 oneTurn('FA7FC00000', 'NaN');
-oneTurn('FB3ff0000000000000', '1.0');
+oneTurn('FB3ff0000000000000', '1');
 oneTurn('c2480100000000000000', '72057594037927936');
 oneTurn('c24900ffffffffffffffff', '18446744073709551615');
 oneTurn('c240', '0');

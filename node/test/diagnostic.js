@@ -21,13 +21,13 @@ function oneTurn(cborText, ok, compareWithOrNull) {
 }
 
 oneTurn("2", true, null);
-oneTurn("2.0", true, null);
+oneTurn("2.0", true, "2");
 oneTurn("123456789012345678901234567890", true, null);
 oneTurn("Infinity", true, null);
 oneTurn("-Infinity", true, null);
 oneTurn("NaN", true, null);
-oneTurn("0.0", true, null);
-oneTurn("-0.0", true, null);
+oneTurn("0.0", true, "0");
+oneTurn("-0.0", true, "0");
 oneTurn('{\n  4: "hi"\n}', true, null);
 oneTurn('[4, true, false, null]', true, null);
 oneTurn('"next\\nline"', true, null);

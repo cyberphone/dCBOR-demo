@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 //                                                                             //
-//                             CBOR JavaScript API                             //
+//                       CBOR JavaScript API (dCBOR patch)                     //
 //                                                                             //
 // Author: Anders Rundgren (https://github.com/cyberphone)                     //
 /////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +37,9 @@ export default class CBOR {
     }
 
     getFloat = function() {
+      if (this instanceof CBOR.Int) {
+        return this.getInt();
+      }
       return this.#checkTypeAndGetValue(CBOR.Float);
     }
 
@@ -275,17 +278,25 @@ export default class CBOR {
 
     constructor(value) {
       super();
-      this.#value = CBOR.#typeCheck(value, 'Number');
+      value = CBOR.#typeCheck(value, 'Number');
+      if (value == 0) value = 0;  // -0 killer
+      this.#value = value;
+      // Could it rather be represented by an integer?
+      if (Number.isSafeInteger(value)) {
+        // Yes!  Apply "Numeric reduction".
+        this.#encoded = CBOR.Int(value).encode();
+        this.#tag = null;
+        return;
+      }
+      // Standard float handling.
       // Begin catching the F16 edge cases.
       this.#tag = CBOR.#MT_FLOAT16;
       if (Number.isNaN(value)) {
-        this.#encoded = CBOR.#int16ToByteArray(0x7e00);
+        this._finalFloat(CBOR.#int16ToByteArray(0x7e00));
       } else if (!Number.isFinite(value)) {
-        this.#encoded = CBOR.#int16ToByteArray(value < 0 ? 0xfc00 : 0x7c00);
-      } else if (Math.abs(value) == 0) {
-        this.#encoded = CBOR.#int16ToByteArray(Object.is(value,-0) ? 0x8000 : 0x0000);
+        this._finalFloat(CBOR.#int16ToByteArray(value < 0 ? 0xfc00 : 0x7c00));
       } else {
-        // It is apparently a genuine (non-zero) number.
+        // It is apparently a genuine number.
         // The following code depends on that Math.fround works as expected.
         let f32 = Math.fround(value);
         let u8;
@@ -342,12 +353,12 @@ export default class CBOR {
                 (f16exp << 10) +
                 // Significand.
                 f16signif;
-                this.#encoded = CBOR.#int16ToByteArray(f16bin);
+                this._finalFloat(CBOR.#int16ToByteArray(f16bin));
           } else {
             // Converting value to F32 returned a truncated result.
             // Full 64-bit representation is required.
             this.#tag = CBOR.#MT_FLOAT64;
-            this.#encoded = CBOR.#f64ToByteArray(value);
+          this._finalFloat(CBOR.#f64ToByteArray(value));
           }
           // Common F16 and F64 return point.
           return;
@@ -360,29 +371,29 @@ export default class CBOR {
             (f32exp * 0x800000) +
             // Significand.
             f32signif;
-            this.#encoded = CBOR.addArrays(CBOR.#int16ToByteArray(f32bin / 0x10000), 
-                                           CBOR.#int16ToByteArray(f32bin % 0x10000));
+            this._finalFloat(CBOR.addArrays(CBOR.#int16ToByteArray(f32bin / 0x10000), 
+                                            CBOR.#int16ToByteArray(f32bin % 0x10000)));
       }
+    }
+
+    _finalFloat(ieee754) {
+      this.#encoded = CBOR.addArrays(new Uint8Array([this.#tag]), ieee754);
     }
     
     encode = function() {
-      return CBOR.addArrays(new Uint8Array([this.#tag]), this.#encoded);
+      return this.#encoded;
     }
 
     internalToString = function(cborPrinter) {
-      let floatString = Object.is(this.#value,-0) ? '-0.0' : this.#value.toString();
+      let floatString = this.#value.toString();
       // Diagnostic Notation support.
-      if (floatString.indexOf('.') < 0) {
+      if (this.#tag && floatString.indexOf('.') < 0) {
         let matches = floatString.match(/\-?\d+/g);
         if (matches) {
           floatString = matches[0] + '.0' + floatString.substring(matches[0].length);
         }
       }
       cborPrinter.append(floatString);
-    }
-
-    _compare = function(decoded) {
-      return CBOR.compareArrays(this.#encoded, decoded);
     }
 
     _getLength = function() {
@@ -886,9 +897,11 @@ export default class CBOR {
       return Number(value);
     }
 
-    compareAndReturn = function(decoded, f64) {
+    compareAndReturn = function(tag, decoded, f64) {
+
       let cborFloat = CBOR.Float(f64);
-      if (cborFloat._compare(decoded) && this.deterministicMode) {
+      if (CBOR.compareArrays(cborFloat.encode(), CBOR.addArrays(new Uint8Array([tag]), decoded)) &&
+          this.deterministicMode) {
         CBOR.#error("Non-deterministic encoding of: " + f64);
       }
       return cborFloat;
@@ -922,7 +935,7 @@ export default class CBOR {
         // Divide with: 2 ^ (Exponent offset + Size of significand - 1).
         f64 = significand / 0x1000000;
       }
-      return this.compareAndReturn(decoded, f16Binary >= 0x8000 ? -f64 : f64);
+      return this.compareAndReturn(CBOR.#MT_FLOAT16, decoded, f16Binary >= 0x8000 ? -f64 : f64);
     }
 
     getObject = function() {
@@ -950,13 +963,15 @@ export default class CBOR {
            let f32bytes = this.readBytes(4);
            const f32buffer = new ArrayBuffer(4);
            new Uint8Array(f32buffer).set(f32bytes);
-           return this.compareAndReturn(f32bytes, new DataView(f32buffer).getFloat32(0, false));
+           return this.compareAndReturn(CBOR.#MT_FLOAT32, 
+                                        f32bytes, new DataView(f32buffer).getFloat32(0, false));
 
         case CBOR.#MT_FLOAT64:
            let f64bytes = this.readBytes(8);
            const f64buffer = new ArrayBuffer(8);
            new Uint8Array(f64buffer).set(f64bytes);
-           return this.compareAndReturn(f64bytes, new DataView(f64buffer).getFloat64(0, false));
+           return this.compareAndReturn(CBOR.#MT_FLOAT64,
+                                        f64bytes, new DataView(f64buffer).getFloat64(0, false));
 
         case CBOR.#MT_NULL:
           return CBOR.Null();

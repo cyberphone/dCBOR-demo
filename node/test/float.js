@@ -26,14 +26,14 @@ function oneTurn(value, expected) {
 }
 oneTurn(6.10649585723877e-5, 'fa38801000');
 oneTurn(10.559998512268066, 'fa4128f5c1');
-oneTurn(65472.0, 'f97bfe');
+oneTurn(65472.0, '19ffc0');
 oneTurn(65472.00390625, 'fa477fc001');
-oneTurn(65503.0, 'fa477fdf00');
-oneTurn(65504.0, 'f97bff');
+oneTurn(65503.0, '19ffdf');
+oneTurn(65504.0, '19ffe0');
 oneTurn(65504.00390625, 'fa477fe001');
 oneTurn(65504.5, 'fa477fe080');
-oneTurn(65505.0, 'fa477fe100');
-oneTurn(131008.0, 'fa47ffe000');
+oneTurn(65505.0, '19ffe1');
+oneTurn(131008.0, '1a0001ffc0');
 oneTurn(-5.960464477539062e-8, 'fbbe6fffffffffffff');
 oneTurn(-5.9604644775390625e-8, 'f98001');
 oneTurn(-5.960464477539064e-8, 'fbbe70000000000001');
