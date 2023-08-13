@@ -280,7 +280,7 @@ export default class CBOR {
     constructor(value) {
       super();
       value = CBOR.#typeCheck(value, 'Number');
-      if (value == 0) value = 0;  // -0 killer
+      if (value == 0) value = 0;  // In dCBOR -0.0 must set to 0
       this.#value = value;
       // Could it rather be represented by an integer?
       if (Number.isSafeInteger(value)) {
