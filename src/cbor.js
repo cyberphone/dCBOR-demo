@@ -1,6 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 //                                                                             //
-//                       CBOR JavaScript API (dCBOR patch)                     //
+//                             CBOR JavaScript API                             //
+//                               (dCBOR Version)                               //
 //                                                                             //
 // Author: Anders Rundgren (https://github.com/cyberphone)                     //
 /////////////////////////////////////////////////////////////////////////////////
