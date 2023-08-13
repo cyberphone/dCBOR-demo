@@ -398,7 +398,7 @@ export default class CBOR {
     }
 
     _getLength = function() {
-      return this.#encoded.length;
+      return this.#encoded.length - 1;
     }
 
     _get = function() {
