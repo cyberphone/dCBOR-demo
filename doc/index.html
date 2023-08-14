@@ -3,12 +3,15 @@
 <head>
   <link rel='icon' href='webpkiorg.png' sizes='192x192'>
   <meta name='viewport' content='initial-scale=1.0'>
-  <title>CBOR JavaScript API</title>
+  <title>dCBOR JavaScript API</title>
   <link rel='stylesheet' type='text/css' href='style.css'>
 </head>
 <body>
   <img style="max-width:30%" src="cbor.js.svg" alt="logo" title="CBOR.js logotype">
-  <h3 style="text-align:center;font-weight:normal;font-size:1.8em">CBOR.js - JavaScript API</h3>
+  <h3 style="text-align:center;font-weight:normal;font-size:1.8em">
+    CBOR.js - JavaScript API<br>
+    <span style="font-size: 0.7em">(dCBOR Version)</span>
+  </h3>
   <h3 id='toc'>Abstract</h3>
   <i>
     This document describes a JavaScript API for encoding and decoding data in the
@@ -116,14 +119,6 @@
     <li><i>Optional</i>: <a href='#common.checkforunread'>check for unread elements</a></li>
   </ul>
   Note: in this specification CBOR data items are subsequently referred to as CBOR objects.
-  <div id='cross-platform' class='webpkicomment' style='margin:1.2em 0 0.5em 0'>
-    Although this document describes a JavaScript API, it could also serve
-    as a guide for CBOR implementations for other software platforms,
-    with the goal of creating the foundation for cross platform interoperability.
-    Due to this consideration, the level of CBOR support provided by the API is
-    of the type &quot;general purpose&quot;, avoiding constructs that are specific to JavaScript,
-    like <code>undefined</code> and typed arrays beyond <code>Uint8Array</code>.
-  </div>
   <h3 id='main.wrappers'>2.&nbsp;&nbsp;CBOR Wrapper Objects</h3>
 
   This section describes the wrapper objects and their specific methods.
@@ -902,16 +897,6 @@ base64 encoded data as well as data with or without
     method, CBOR data may also be provided in diagnostic (textual) notation,
     making CBOR useful for <i>local</i> "config" and test data files as well.
   </p>
-  <p>
-    Due to the
-    <a href='#main.deterministic'>Deterministic Encoding</a>
-    scheme used by CBOR.js, CBOR data can be <i>bidirectionally</i>
-    converted between its native (binary) format and diagnostic notation
-    without getting corrupted.  Note though that text-binary-text &quot;roundtrips&quot;
-    do not necessarily return identical text: <code>0x10</code> used
-    as diagnostic notation input will return <code>16</code> as
-    diagnostic notation output.
-  </p>
   The following table shows how CBOR objects should be represented in
   diagnostic notation:
   <div class='webpkifloat'>
@@ -1086,7 +1071,7 @@ base64 encoded data as well as data with or without
   </ol>
   <h3 id='main.deterministic'>8.&nbsp;&nbsp;Deterministic Encoding</h3>
 
-  This section is primarily targeting implementers of CBOR tools.
+  Note: This section has not yet been updated to match dCBOR.
   <p>
     While there are different ways you can encode certain CBOR objects,
     this is non-trivial to support in a generic platform API without
