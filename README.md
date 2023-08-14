@@ -1,6 +1,6 @@
 <a id="cborjs">![Saturn is great](https://cyberphone.github.io/CBOR.js/doc/cbor.js.svg)
 
-# INVALID DOCUMENT - This is dCBOR
+Note: This is the **dCBOR** version.
 
 This repository contains a
 [CBOR JavaScript API](https://cyberphone.github.io/CBOR.js/doc/).  The API loosely mimics the "JSON" object by _exposing a single global object_,
@@ -9,20 +9,6 @@ unsurprisingly named "CBOR".  To minimize the need for application developers ha
 
   The wrapper objects are used for encoding CBOR data items,
   as well as being the result of CBOR decoding.
-
-To simplify adoption, the API utilizes a CBOR encoding scheme that is _backward compatible_
-with the "CBOR&nbsp;Playground" (https://cbor.me), maintained by the
-[RFC8949](https://www.rfc-editor.org/rfc/rfc8949.html) editor, Carsten&nbsp;Bormann.
-
-### Design Rationale
-
-The proposed API is intended to provide CBOR "baseline" functionality that can easily be implemented
-in standard platforms with an emphasis on computationally advanced systems like 
-_Web browsers_, _mobile phones_, and _Web servers_.
-Due to the desire maintaining interoperability across different platforms,
-the API "by design" does not address JavaScript specific
-types like `undefined` and binary data beyond `Uint8Array`.
-See also: [CBOR Everywhere](https://github.com/cyberphone/cbor-everywhere/).
 
 ### "CBOR" Components
 - Self-encoding wrapper objects
@@ -62,13 +48,13 @@ Value=45.7
 
 ### On-line Testing
 
-On https://cyberphone.github.io/CBOR.js/doc/playground.html you will find a simple Web application,
+On https://cyberphone.github.io/dCBOR-demo/doc/playground.html you will find a simple Web application,
 permitting testing the encoder, decoder, and diagnostic notation implementation.
 
 ### Deterministic Encoding Rules
 
 The JavaScript API implements deterministic encoding based on section 4.2 of [RFC8949](https://www.rfc-editor.org/rfc/rfc8949.html).
-For maximum interoperability, the API also depends on Rule&nbsp;2 of section 4.2.2.
+For maximum interoperability, the API also depends on Rule&nbsp;1 of section 4.2.2.
 
 To shield developers from having to know the inner workings of deterministic encoding, the CBOR.js API performs
 all the necessary transformations _automatically_.  This for example means that if the `set` operations
@@ -94,8 +80,6 @@ console.log(CBOR.toHex(cbor));
 ------------------------------
 a201fb4046d9999999999a0269486920746865726521
 ```
-Aided by the model used for deterministic encoding, diagnostic notation becomes _bidirectional,_
-while remaining faithful to the native CBOR representation.
 
 ### Implementation Note
 
@@ -105,10 +89,11 @@ The code represents a _Reference Implementation_, not code for inclusion in Java
 
 |Language|URL|
 |-|-|
-|JDK&nbsp;17+|https://github.com/cyberphone/openkeystore|
-|Android/Java|https://github.com/cyberphone/android-cbor|
+|Rust|https://github.com/BlockchainCommons/bc-dcbor-rust|
+|Swift|https://github.com/BlockchainCommons/BCSwiftDCBOR|
+|TypeScript|https://github.com/BlockchainCommons/bc-dcbor-ts|
 
 ### Internet Draft
-https://datatracker.ietf.org/doc/draft-rundgren-deterministic-cbor/
+https://datatracker.ietf.org/doc/draft-mcnally-deterministic-cbor/
 
-Updated: 2023-08-08
+Updated: 2023-08-14
