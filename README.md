@@ -3,7 +3,7 @@
 Note: This is the **dCBOR** version.
 
 This repository contains a
-[CBOR JavaScript API](https://cyberphone.github.io/CBOR.js/doc/).  The API loosely mimics the "JSON" object by _exposing a single global object_,
+[CBOR JavaScript API](https://cyberphone.github.io/dCBOR-demo/doc/).  The API loosely mimics the "JSON" object by _exposing a single global object_,
 unsurprisingly named "CBOR".  To minimize the need for application developers having detailed knowledge of CBOR,
   the API provides a set of high level wrapper objects.
 
