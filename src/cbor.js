@@ -283,9 +283,9 @@ class CBOR {
       if (value == 0) value = 0;  // In dCBOR -0.0 must set to 0
       this.#value = value;
       // Could it rather be represented by an integer?
-      if (Number.isSafeInteger(value)) {
+      if (Number.isInteger(value) && value >= -18446744073709551616 && value <= 18446744073709551615) {
         // Yes!  Apply "Numeric reduction".
-        this.#encoded = CBOR.Int(value).encode();
+        this.#encoded = CBOR.BigInt(BigInt(value)).encode();
         this.#tag = null;
         return;
       }
@@ -386,15 +386,19 @@ class CBOR {
     }
 
     internalToString = function(cborPrinter) {
-      let floatString = this.#value.toString();
       // Diagnostic Notation support.
-      if (this.#tag && floatString.indexOf('.') < 0) {
-        let matches = floatString.match(/\-?\d+/g);
-        if (matches) {
-          floatString = matches[0] + '.0' + floatString.substring(matches[0].length);
+      if (this.#tag) {
+        let floatString = this.#value.toString();
+        if (floatString.indexOf('.') < 0) {
+          let matches = floatString.match(/\-?\d+/g);
+          if (matches) {
+            floatString = matches[0] + '.0' + floatString.substring(matches[0].length);
+          }
         }
+        cborPrinter.append(floatString);
+      } else {
+        cborPrinter.append(BigInt(this.#value).toString());
       }
-      cborPrinter.append(floatString);
     }
 
     _getLength = function() {
