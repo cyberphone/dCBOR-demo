@@ -41,6 +41,9 @@ class CBOR {
       if (this instanceof CBOR.Int) {
         return this.getInt();
       }
+      if (this instanceof CBOR.BigInt) {
+        return Number(this.getBigInt());
+      }
       return this.#checkTypeAndGetValue(CBOR.Float);
     }
 
