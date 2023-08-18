@@ -41,6 +41,13 @@ export default class CBOR {
       if (this instanceof CBOR.Int) {
         return this.getInt();
       }
+      if (this instanceof CBOR.BigInt) {
+        let value= this.getBigInt();
+        if (value >= -18446744073709551616n && value <= 18446744073709551615n) {
+          return Number(value);
+        }
+        CBOR.#error("Integer out of range for conversion to Float");
+      }
       return this.#checkTypeAndGetValue(CBOR.Float);
     }
 
@@ -1337,7 +1344,10 @@ export default class CBOR {
             break;
           
           case '.':
-            floatingPoint = true;
+          case 'e':
+            if (!prefix) {
+              floatingPoint = true;
+            }
             continue;
 
           case '_':
